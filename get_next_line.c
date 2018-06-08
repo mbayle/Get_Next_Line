@@ -1,7 +1,7 @@
 #include "libft.h"
 #include "get_next_line.h"
 
-int		ft_malloc_again(char **save)
+int		ft_realloc(char **save)
 {
 	char	*tmp;
 
@@ -15,7 +15,7 @@ int		ft_malloc_again(char **save)
 	return (1);
 }
 
-int		fill_line(int j, char **save, char **line)
+int		save_line(int j, char **save, char **line)
 {
 	int		i;
 	int		y;
