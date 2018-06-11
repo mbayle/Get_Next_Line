@@ -6,11 +6,10 @@
 /*   By: mabayle <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/09 00:22:23 by mabayle           #+#    #+#             */
-/*   Updated: 2018/06/09 00:25:29 by mabayle          ###   ########.fr       */
+/*   Updated: 2018/06/11 16:07:44 by mabayle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "get_next_line.h"
 
 int		ft_realloc(char **save)
@@ -36,13 +35,13 @@ int		save_line(int j, char **save, char **line)
 	i = 0;
 	if (j != 0 || ft_strlen((*save)) != 0)
 	{
-		while ((*save)[i] != '\n')
+		while ((*save)[i] != SEPARATOR && (*save)[i] != END)
 		{
 			(*line)[i] = (*save)[i];
 			i++;
 		}
 		(*line)[i++] = '\0';
-		if ((*save)[0] == '\n')
+		if ((*save)[0] == SEPARATOR)
 		{
 			while ((*save)[i])
 				(*save)[y++] = (*save)[i++];
@@ -61,19 +60,19 @@ int		get_next_line(int fd, char **line)
 	int			j;
 	static char	*save;
 
-	if (fd < 0 || (!save && !(save = ft_strnew(BUFF_SIZE))))
+	if (fd < 0 || (!save && !(save = ft_strnew(BUFF_SIZE))) || !line)
 		return (-1);
 	if (!(*line = (char *)malloc(sizeof(char) * BUFF_SIZE)))
 		return (-1);
 	while ((j = read(fd, *line, BUFF_SIZE)) > 0)
 	{
-		if (!(ft_malloc_again(&save)))
+		if (!(ft_realloc(&save)))
 			return (-1);
 		ft_strncat(save, *line, BUFF_SIZE);
-		if (ft_memchr(*line, '\n', BUFF_SIZE))
+		if (ft_memchr(*line, SEPARATOR, BUFF_SIZE))
 			break ;
 	}
-	if ((fill_line(j, &save, &(*line))) == 2)
+	if ((save_line(j, &save, &(*line))) == 2)
 		return (1);
 	if (ft_memcmp((*line), save, ft_strlen(*line)) == 0)
 	{
