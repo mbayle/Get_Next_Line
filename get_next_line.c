@@ -6,79 +6,95 @@
 /*   By: mabayle <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/09 00:22:23 by mabayle           #+#    #+#             */
-/*   Updated: 2018/06/11 16:07:44 by mabayle          ###   ########.fr       */
+/*   Updated: 2018/06/12 05:40:29 by mabayle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		ft_realloc(char **save)
+void				ft_free(void **ap)
 {
-	char	*tmp;
-
-	if (!(tmp = ft_strnew(ft_strlen(*save))))
-		return (0);
-	ft_strcpy(tmp, *save);
-	*save = NULL;
-	if (!(*save = ft_strnew(ft_strlen(tmp) + BUFF_SIZE)))
-		return (0);
-	ft_strcpy(*save, tmp);
-	return (1);
+	if (ap == NULL)
+		return ;
+	free(*ap);
+	*ap = NULL;
 }
 
-int		save_line(int j, char **save, char **line)
+static int			ft_check(char **buff, char **line)
 {
-	int		i;
-	int		y;
+	char			*tmp;
 
-	y = 0;
-	i = 0;
-	if (j != 0 || ft_strlen((*save)) != 0)
+	tmp = ft_strchr(*buff, SEPARATOR);
+	if (tmp)
 	{
-		while ((*save)[i] != SEPARATOR && (*save)[i] != END)
-		{
-			(*line)[i] = (*save)[i];
-			i++;
-		}
-		(*line)[i++] = '\0';
-		if ((*save)[0] == SEPARATOR)
-		{
-			while ((*save)[i])
-				(*save)[y++] = (*save)[i++];
-			(*save)[y] = '\0';
-			return (2);
-		}
-		while ((*save)[i])
-			(*save)[y++] = (*save)[i++];
-		(*save)[y] = '\0';
-	}
-	return (1);
-}
-
-int		get_next_line(int fd, char **line)
-{
-	int			j;
-	static char	*save;
-
-	if (fd < 0 || (!save && !(save = ft_strnew(BUFF_SIZE))) || !line)
-		return (-1);
-	if (!(*line = (char *)malloc(sizeof(char) * BUFF_SIZE)))
-		return (-1);
-	while ((j = read(fd, *line, BUFF_SIZE)) > 0)
-	{
-		if (!(ft_realloc(&save)))
-			return (-1);
-		ft_strncat(save, *line, BUFF_SIZE);
-		if (ft_memchr(*line, SEPARATOR, BUFF_SIZE))
-			break ;
-	}
-	if ((save_line(j, &save, &(*line))) == 2)
+		*line = ft_strsub(*buff, 0, tmp - *buff);
+		ft_memmove(*buff, tmp + 1, ft_strlen(tmp));
+		tmp = NULL;
 		return (1);
-	if (ft_memcmp((*line), save, ft_strlen(*line)) == 0)
-	{
-		if (!(*line = ft_strdup("")))
-			return (1);
-		return (0);
 	}
+	return (0);
+}
+
+static	void		ft_add_data(char **buff, char *tmp, char *new_buff)
+{
+	tmp = ft_strdup(*buff);
+	ft_free((void **)buff);
+	*buff = ft_strjoin(tmp, new_buff);
+	ft_free((void **)&tmp);
+}
+
+static	int			ft_fill(int fd, char **buff, char **line)
+{
+	char			*new_buff;
+	char			*tmp;
+	int				ret;
+
+	if (!(new_buff = (char *)malloc(sizeof(char) * BUFF_SIZE + 1)))
+		return (-1);
+	new_buff[BUFF_SIZE] = 0;
+	while ((ret = read(fd, new_buff, BUFF_SIZE)))
+	{
+		if (ret == -1)
+			return (-1);
+		new_buff[ret] = '\0';
+		tmp = NULL;
+		if (*buff)
+			ft_add_data(buff, tmp, new_buff);
+		else
+			*buff = ft_strdup(new_buff);
+		if (ft_check(buff, line))
+		{
+			ft_free((void **)&new_buff);
+			return (1);
+		}
+	}
+	ft_free((void **)&new_buff);
+	return (0);
+}
+
+int				get_next_line(int fd, char **line)
+{
+	static char	*buff[OPEN_MAX];
+	char		*fd_error;
+	int			ret;
+
+	if (!(fd_error = (char *)malloc(sizeof(char) * 1)))
+		return (-1);
+	if (!line || fd < 0 || fd > OPEN_MAX || read(fd, fd_error, 0) < 0)
+	{
+		ft_free((void **)&fd_error);
+		if (line != NULL)
+			*line = NULL;
+		return (-1);
+	}
+	ft_free((void **)&fd_error);
+	if (buff[fd] && ft_check(&buff[fd], line))
+		return (1);
+	if ((ret = ft_fill(fd, &buff[fd], line)) != 0)
+		return (ret);
+	if (buff[fd] == NULL || buff[fd][0] == '\0')
+		return (0);
+	*line = buff[fd];
+	buff[fd] = NULL;
 	return (1);
 }
