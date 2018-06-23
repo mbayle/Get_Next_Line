@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mabayle <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/06/11 12:29:24 by mabayle           #+#    #+#             */
-/*   Updated: 2018/06/11 12:31:53 by mabayle          ###   ########.fr       */
+/*   Created: 2018/06/20 15:04:20 by mabayle           #+#    #+#             */
+/*   Updated: 2018/06/23 17:25:49 by mabayle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,8 @@
 
 int		main(void)
 {
-	char		**line;
+	char		**line = NULL;
 
-	**line = NULL;
 	get_next_line(0, line);
-	printf("my line: %s\n", *line);
 	return (0);
 }

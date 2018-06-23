@@ -6,7 +6,7 @@
 /*   By: mabayle <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/09 00:22:23 by mabayle           #+#    #+#             */
-/*   Updated: 2018/06/12 05:40:29 by mabayle          ###   ########.fr       */
+/*   Updated: 2018/06/20 18:08:28 by mabayle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,11 +72,11 @@ static	int			ft_fill(int fd, char **buff, char **line)
 	return (0);
 }
 
-int				get_next_line(int fd, char **line)
+int					get_next_line(int fd, char **line)
 {
-	static char	*buff[OPEN_MAX];
-	char		*fd_error;
-	int			ret;
+	static char		*buff[OPEN_MAX];
+	char			*fd_error;
+	int				ret;
 
 	if (!(fd_error = (char *)malloc(sizeof(char) * 1)))
 		return (-1);
