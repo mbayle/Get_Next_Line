@@ -6,7 +6,7 @@
 /*   By: mabayle <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/11 12:25:45 by mabayle           #+#    #+#             */
-/*   Updated: 2018/06/23 17:24:23 by mabayle          ###   ########.fr       */
+/*   Updated: 2018/06/26 20:31:37 by mabayle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <unistd.h>
 # include "libft.h"
 
-# define BUFF_SIZE 1
+# define BUFF_SIZE 32
 # define SEPARATOR '\n'
 
 int		get_next_line(int fd, char **line);
